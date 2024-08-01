@@ -1,4 +1,10 @@
 import { useState } from "react";
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import FilterListIcon from '@mui/icons-material/FilterList';
 import {
   Dialog,
   DialogBackdrop,
@@ -21,6 +27,7 @@ import {
 } from "@heroicons/react/20/solid";
 import ProductCard from "./ProductCard";
 import { mens_kurta } from "../../../Data/mens_kurta";
+import {filters,singleFilter} from "./FilterData.js"
 const sortOptions = [
 
   { name: "Price: Low to High", href: "#", current: false },
@@ -67,17 +74,7 @@ export default function Product() {
               </div>
 
               {/* Filters */}
-              <form className="mt-4 border-t border-gray-200">
-                <h3 className="sr-only">Categories</h3>
-                <ul role="list" className="px-2 py-3 font-medium text-gray-900">
-                  {subCategories.map((category) => (
-                    <li key={category.name}>
-                      <a href={category.href} className="block px-2 py-3">
-                        {category.name}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
+              <form className="mt-4 border-t border-gray-200">       
 
                 {filters.map((section) => (
                   <Disclosure
@@ -197,20 +194,13 @@ export default function Product() {
             </h2>
 
             <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-5">
-              {/* Filters */}
+              
+              <div>
+              <div className=" py-10 flex justify-between items-center">
+              <h1 className="text-lg opacity-50 font-bold">Filters</h1>
+              <FilterListIcon/>
+              </div>
               <form className="hidden lg:block">
-                <h3 className="sr-only">Categories</h3>
-                <ul
-                  role="list"
-                  className="space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900"
-                >
-                  {subCategories.map((category) => (
-                    <li key={category.name}>
-                      <a href={category.href}>{category.name}</a>
-                    </li>
-                  ))}
-                </ul>
-
                 {filters.map((section) => (
                   <Disclosure
                     key={section.id}
@@ -219,7 +209,7 @@ export default function Product() {
                   >
                     <h3 className="-my-3 flow-root">
                       <DisclosureButton className="group flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
-                        <span className="font-medium text-gray-900">
+                        <span className="font-medium text-black">
                           {section.name}
                         </span>
                         <span className="ml-6 flex items-center">
@@ -258,7 +248,52 @@ export default function Product() {
                     </DisclosurePanel>
                   </Disclosure>
                 ))}
-              </form>
+                {singleFilter.map((section) => (
+                  <Disclosure
+                    key={section.id}
+                    as="div"
+                    className="border-b border-gray-200 py-6"
+                  >
+                    {({open})=>(
+                    <>
+                    <h3 className="-my-3 flow-root ">
+                      <DisclosureButton className="group flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
+
+                        <FormLabel sx={{color:"black"}} className="text-gray-900" id="demo-radio-buttons-group-label ">{section.name}</FormLabel>
+                        <span className="ml-6 flex items-center">
+                          <PlusIcon
+                            aria-hidden="true"
+                            className="h-5 w-5 group-data-[open]:hidden"
+                          />
+                          <MinusIcon
+                            aria-hidden="true"
+                            className="h-5 w-5 [.group:not([data-open])_&]:hidden"
+                          />
+                        </span>
+                      </DisclosureButton>
+                    </h3>
+                    <DisclosurePanel className="pt-6">
+                      <div className="space-y-4">
+                      <FormControl>
+                      <RadioGroup
+                            aria-labelledby="demo-radio-buttons-group-label"
+                            defaultValue="female"
+                            name="radio-buttons-group"
+                          >
+                        {section.options.map((option, optionIdx) => (
+                          <> 
+                            <FormControlLabel value={option.id} control={<Radio />} label={option.label} />
+                          </>
+                        ))}
+                        </RadioGroup>
+                        </FormControl>
+                      </div>
+                    </DisclosurePanel>
+                    </>
+                   )} 
+                  </Disclosure>
+                ))}
+              </form></div>
 
               {/* Product grid */}
               <div className="lg:col-span-4 w-full">
