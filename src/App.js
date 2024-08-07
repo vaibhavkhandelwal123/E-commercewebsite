@@ -8,17 +8,26 @@ import ProductDetails from './customer/components/ProductDetails/ProductDetails'
 import { Card } from '@mui/material';
 import Cart from './customer/components/Cart/Cart';
 import Checkout from './customer/components/Checkout/Checkout';
+import Order from './customer/components/Order/Order';
+import OrderDetails from './customer/components/Order/OrderDetails';
+import { Route, Routes } from 'react-router-dom';
+import CustomerRouter from './Routers/CustomerRouter';
 
 function App() {
   return (
     <div className="">
+      <Routes>
+        <Route path='/*' element={<CustomerRouter/>}></Route>
+      </Routes>
       <Navigation/>
       <div>
         {/* <Product/> */}
         {/* <HomePage/> */}
         {/* <ProductDetails/> */}
         {/* <Cart/> */}
-        <Checkout/>
+        {/* <Checkout/> */}
+        {/* <Order/> */}
+        {/* <OrderDetails/> */}
       </div>
         <Footer/>
     </div>
