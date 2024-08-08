@@ -19,17 +19,7 @@ function App() {
       <Routes>
         <Route path='/*' element={<CustomerRouter/>}></Route>
       </Routes>
-      <Navigation/>
-      <div>
-        {/* <Product/> */}
-        {/* <HomePage/> */}
-        {/* <ProductDetails/> */}
-        {/* <Cart/> */}
-        {/* <Checkout/> */}
-        {/* <Order/> */}
-        {/* <OrderDetails/> */}
-      </div>
-        <Footer/>
+      
     </div>
     
   );

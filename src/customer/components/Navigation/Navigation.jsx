@@ -1,27 +1,52 @@
-
-'use client'
 import { Fragment, useState } from 'react'
 import {
   Dialog,
+  Popover,
+  Tab,
+  Transition,
   DialogBackdrop,
   DialogPanel,
-  Popover,
-  PopoverButton,
-  PopoverGroup,
-  PopoverPanel,
-  Tab,
   TabGroup,
   TabList,
-  TabPanel,
   TabPanels,
+  TabPanel,
+  Button
 } from '@headlessui/react'
 import { Bars3Icon, MagnifyingGlassIcon, ShoppingBagIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import {navigation} from "./navigationData"
+import { Avatar,Menu,MenuItem} from '@mui/material'
+import { deepPurple } from '@mui/material/colors'
 import { useNavigate } from 'react-router-dom'
-import Product from '../Product/Product'
-import {navigation} from "../Navigation/navigationData.js"
+function ClassNames(...classes){
+  return classes.filter(Boolean).join(" ");
+}
 
 export default function Navigation() {
   const [open, setOpen] = useState(false)
+  const navigate = useNavigate();
+  const[openAuthModal,setOpenAuthModal] = useState(false);
+  const [anchorE1, setAnchorE1] = useState(null);
+  const openUserMenu=Boolean(anchorE1);
+  const jwt = localStorage.getItem("jwt");
+
+  const handleUserClick = (event) => {
+    setAnchorE1(event.currentTarget);
+  };
+
+  const handleCloseUserMenu = (event) => {
+    setAnchorE1(null);
+  }
+
+  const handleOpen = () => {
+    setOpenAuthModal(true);
+  }
+
+  const handleCategoryClick = (category,section,item,close) => {
+    navigate(`/${category.id}/${section.id}/${item.id}`)
+    close();
+  }
+
+
 
   return (
     <div className="bg-white z-50">
@@ -156,7 +181,7 @@ export default function Navigation() {
               <button
                 type="button"
                 onClick={() => setOpen(true)}
-                className="relative rounded-md bg-white p-2 text-gray-400 lg:hidden"
+                className="rounded-md bg-white p-2 text-gray-400 lg:hidden"
               >
                 <span className="sr-only">Open menu</span>
                 <Bars3Icon aria-hidden="true" className="h-6 w-6" />
@@ -164,30 +189,44 @@ export default function Navigation() {
 
               {/* Logo */}
               <div className="ml-4 flex lg:ml-0">
-                <a href="#">
+                
                   <span className="sr-only">Your Company</span>
                   <img
-                  className="h-16 w-auto"
-                    alt=""
+                  className="h-8 w-8 mr-2"
+                    alt="ShopwithVaibhav"
                     src="https://i.pinimg.com/originals/63/d9/1f/63d91f8fe7dacece85d70d7833dff18e.jpg"
 
                   />
-                </a>
               </div>
 
               {/* Flyout menus */}
-              <PopoverGroup className="hidden lg:ml-8 lg:block lg:self-stretch z-10">
+              <Popover.Group className="hidden lg:ml-8 lg:block lg:self-stretch z-10">
                 <div className="flex h-full space-x-8">
                   {navigation.categories.map((category) => (
                     <Popover key={category.name} className="flex">
-                      <div className="relative flex">
-                        <PopoverButton className="relative z-10 -mb-px flex items-center border-b-2 border-transparent pt-px text-sm font-medium text-gray-700 
-                        transition-colors duration-200 ease-out hover:text-gray-800 data-[open]:border-indigo-600 data-[open]:text-indigo-600">
-                          {category.name}
-                        </PopoverButton>
+                      
+                        {({open , close})=> (
+                          <>
+                          <div className="relative flex">
+                          <Popover.Button
+                          className={ClassNames(
+                            open ? "border-indigo-600 text-indigo-600"
+                            :"border-transparent text-gray-700 hover:text-gray-800",
+                            "relative z-10 -mb-px flex items-center border-b-2 pt-px text-sm font-medium"
+                          )}>
+                            {category.name}
+                          </Popover.Button>
                       </div>
-
-                      <PopoverPanel
+                      <Transition 
+                      as={Fragment}
+                      enter = "transition ease-out duration-200"
+                      enterFrom='opacity-0'
+                      enter-To="opacity-100"
+                      leave = "transition ease-in duration-150"
+                      leaveFrom='opacity-100'
+                      leaveTo='opacity-0'
+                      >
+                      <Popover.Panel
                         transition
                         className="absolute inset-x-0 top-full text-sm text-gray-500 transition data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150 data-[enter]:ease-out data-[leave]:ease-in"
                       >
@@ -214,7 +253,7 @@ export default function Navigation() {
                                     <p aria-hidden="true" className="mt-1">
                                       Shop now
                                     </p>
-                                  </div>
+                                  </div>  
                                 ))}
                               </div>
                               <div className="row-start-1 grid grid-cols-3 gap-x-8 gap-y-10 text-sm">
@@ -230,9 +269,20 @@ export default function Navigation() {
                                     >
                                       {section.items.map((item) => (
                                         <li key={item.name} className="flex">
-                                          <a href={item.href} className="hover:text-gray-800">
+                                          <p
+                                          onClick={() =>
+                                            handleCategoryClick(
+                                              category,
+                                              section,
+                                              item,
+                                              close
+
+                                            )
+                                          }
+                                          className='cursor-pointer hover:text-gray-800'
+                                          >
                                             {item.name}
-                                          </a>
+                                          </p>
                                         </li>
                                       ))}
                                     </ul>
@@ -242,7 +292,10 @@ export default function Navigation() {
                             </div>
                           </div>
                         </div>
-                      </PopoverPanel>
+                      </Popover.Panel>
+                      </Transition>
+                      </>
+                        )}
                     </Popover>
                   ))}
 
@@ -256,49 +309,78 @@ export default function Navigation() {
                     </a>
                   ))}
                 </div>
-              </PopoverGroup>
+              </Popover.Group>
 
               <div className="ml-auto flex items-center">
                 <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-                  <a href="#" className="text-sm font-medium text-gray-700 hover:text-gray-800">
-                    Sign in
-                  </a>
-                  <span aria-hidden="true" className="h-6 w-px bg-gray-200" />
-                  <a href="#" className="text-sm font-medium text-gray-700 hover:text-gray-800">
-                    Create account
-                  </a>
-                </div>
+                  {true ? (
+                    <div>
+                      <Avatar
+                      className='text-white'
+                      onClick={handleUserClick}
+                      aria-controls={open ? "basic-menu" : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={open? "true":undefined}
 
-                <div className="hidden lg:ml-8 lg:flex">
-                  <a href="#" className="flex items-center text-gray-700 hover:text-gray-800">
-                    <img
-                      alt=""
-                      src="https://tailwindui.com/img/flags/flag-canada.svg"
-                      className="block h-auto w-5 flex-shrink-0"
-                    />
-                    <span className="ml-3 block text-sm font-medium">CAD</span>
-                    <span className="sr-only">, change currency</span>
-                  </a>
+                      sx={{
+                        bgcolor:deepPurple[500],
+                        color:"white",
+                        cursor:"pointer"
+                      }}
+                      >
+                        V
+                      </Avatar>
+                      <Menu
+                      id="basic-menu"
+                      anchorE1 = {anchorE1}
+                      open={openUserMenu}
+                      onClose={handleCloseUserMenu}
+                      MenuListProps={{
+                        "aria-labelledby": "basic-button",
+                      }}
+                      >
+                        <MenuItem onClick={handleCloseUserMenu}>
+                        Profile</MenuItem>
+                        <MenuItem onClick={()=>navigate("/account/order")}>My Orders</MenuItem>
+                        <MenuItem>Logout</MenuItem>
+                      </Menu>
+                    </div>
+                    ):(
+                      <Button
+                      onClick={handleOpen}
+                      className="text-sm font-medium text-gray-700 hover:text-gray-800"
+                      >
+                        Signin 
+                      </Button>
+                    )}
                 </div>
 
                 {/* Search */}
                 <div className="flex lg:ml-6">
-                  <a href="#" className="p-2 text-gray-400 hover:text-gray-500">
-                    <span className="sr-only">Search</span>
-                    <MagnifyingGlassIcon aria-hidden="true" className="h-6 w-6" />
-                  </a>
+                  <p className='p-2 text-gray-400 hover:text-gray-500'>
+                    <span className='sr-only'>Search</span>
+                    <MagnifyingGlassIcon
+                    className='h-6 w-6'
+                    aria-hidden="true"
+                    />
+                  </p>
                 </div>
 
                 {/* Cart */}
                 <div className="ml-4 flow-root lg:ml-6">
-                  <a href="#" className="group -m-2 flex items-center p-2">
+                  <Button
+                  className="group -m-2 flex items-center p-2"
+                  >
                     <ShoppingBagIcon
-                      aria-hidden="true"
-                      className="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
+                    className='h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500'
+                    aria-hidden="true"
                     />
-                    <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">0</span>
-                    <span className="sr-only">items in cart, view bag</span>
-                  </a>
+                    <span className='ml-2 text-sm font-medium text-gray-700
+                    group-hover:text-gray-800'>
+                      2
+                    </span>
+                  <span className="sr-only">items in cart, view bag</span>
+                  </Button>
                 </div>
               </div>
             </div>
